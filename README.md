@@ -4,7 +4,7 @@
 
 **[Try the live demo](https://shekit.github.io/alexa-sign-language-translator/)**
 
-**[Read the Blog Post]() Coming Soon**
+**[Read the Blog Post on Tensorflow's Blog]() Coming Soon**
 
 **[Watch the video](https://www.youtube.com/watch?v=kS53y6GWm0w)**
 
