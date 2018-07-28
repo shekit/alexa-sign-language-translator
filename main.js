@@ -128,7 +128,7 @@ class Main {
     trainButton.addEventListener('mousedown', () => {
 
       this.startWebcam()
-      
+
       console.log("ready to train")
       this.createButtonList(true)
       this.addWordForm.innerHTML = ''
@@ -236,7 +236,15 @@ class Main {
     if (this.timer) {
       this.stopTraining();
     }
-    this.video.play();
+    var promise = this.video.play();
+
+    if(promise !== undefined){
+      promise.then(_ => {
+        console.log("Autoplay started")
+      }).catch(error => {
+        console.log("Autoplay prevented")
+      })
+    }
     this.timer = requestAnimationFrame(this.train.bind(this));
   }
   
