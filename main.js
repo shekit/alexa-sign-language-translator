@@ -90,7 +90,7 @@ class Main {
 
     this.updateExampleCount()
 
-    this.startWebcam()
+    
 
     this.createTrainingBtn()
     
@@ -126,6 +126,9 @@ class Main {
 
 
     trainButton.addEventListener('mousedown', () => {
+
+      this.startWebcam()
+      
       console.log("ready to train")
       this.createButtonList(true)
       this.addWordForm.innerHTML = ''
