@@ -77,11 +77,12 @@ var Main = function () {
       var checkbox = document.getElementById("is-terminal-word");
 
       if (word && !words.includes(word)) {
-        console.log(word);
+        //console.log(word)
         words.splice(words.length - 1, 0, word); //insert at penultimate index in array
         _this.createButtonList(false);
         _this.updateExampleCount();
-        console.log(words);
+        //console.log(words)
+
 
         if (checkbox.checked) {
           endWords.push(word);

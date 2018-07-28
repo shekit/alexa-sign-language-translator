@@ -63,11 +63,11 @@ class Main {
       let checkbox = document.getElementById("is-terminal-word")
 
       if(word && !words.includes(word)){
-        console.log(word)
+        //console.log(word)
         words.splice(words.length-1,0,word) //insert at penultimate index in array
         this.createButtonList(false)
         this.updateExampleCount()
-        console.log(words)
+        //console.log(words)
         
 
         if(checkbox.checked){
