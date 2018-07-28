@@ -1,6 +1,8 @@
 # Making Alexa respond to Sign Language using Tensorflow.js
 
-**[Try the live demo]()**
+[]!(https://i.imgur.com/CbvRZIY.gif)
+
+**[Try the live demo](https://shekit.github.io/alexa-sign-language-translator/)**
 
 **[Read the Blog Post]() Coming Soon**
 
@@ -27,6 +29,8 @@ This will start a web server on [`localhost:9966`](http://localhost:9966).
 1. Allow permission to your webcam and microphone. 
 
 2. Add some words you want to train on. 
+
+[]!(https://i.imgur.com/zk3kwIZ.gif)
 
 ## Reference
 To learn more about the classifier used in this repo go to [KNN Image Classifier](https://github.com/PAIR-code/deeplearnjs/tree/master/models/knn_image_classifier)
