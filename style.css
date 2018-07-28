@@ -1,0 +1,141 @@
+body{
+  font-family: "Helvetica Neue", "sans-serif";
+}
+
+#video{
+  transform: rotateY(180deg);
+  -webkit-transform:rotateY(180deg); /* Safari and Chrome */
+  -moz-transform:rotateY(180deg); /* Firefox */
+}
+
+h1 {
+  font-family: 'Baloo Bhaina', "Helvetica Neue", "sans-serif";
+  font-size: 80px;
+  font-weight: bold;
+  line-height: 100%;
+}
+
+#add-word{
+  border:1px solid #333;
+  padding: 10px;
+  font-size: 12px;
+}
+
+.split-left {
+  text-align: center;
+  height: 100%;
+  left:0;
+  width: 39.75%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  overflow-x: hidden;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border-right: 5px solid black;
+  background:tomato;
+}
+
+.split-left h1{
+  color: white;
+}
+
+
+.split-right {
+  height: 100%;
+  width: 59.75%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  overflow-x: hidden;
+  padding-top: 20px;
+  right:0;
+  padding-bottom: 20px;
+  border-left: 5px solid black;
+  background: white;
+}
+
+/* If you want the content centered horizontally and vertically */
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width:75%;
+}
+
+#info {
+  margin-bottom: 30px;
+}
+
+#video {
+  position: absolute;
+  left: 32.5%;
+  top:3%;
+  z-index: 10;
+  background-color: black;
+  border: 8px solid black;
+  border-radius: 5px;
+}
+
+#loader,
+#loader:before,
+#loader:after {
+  background: #000000;
+  -webkit-animation: load1 1s infinite ease-in-out;
+  animation: load1 1s infinite ease-in-out;
+  width: 1em;
+  height: 4em;
+}
+#loader {
+  color: #000000;
+  text-indent: -9999em;
+  margin: 88px auto;
+  position: relative;
+  font-size: 11px;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-animation-delay: -0.16s;
+  animation-delay: -0.16s;
+  display: none;
+}
+#loader:before,
+#loader:after {
+  position: absolute;
+  top: 0;
+  content: '';
+}
+#loader:before {
+  left: -1.5em;
+  -webkit-animation-delay: -0.32s;
+  animation-delay: -0.32s;
+}
+#loader:after {
+  left: 1.5em;
+}
+@-webkit-keyframes load1 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 0;
+    height: 4em;
+  }
+  40% {
+    box-shadow: 0 -2em;
+    height: 5em;
+  }
+}
+@keyframes load1 {
+  0%,
+  80%,
+  100% {
+    box-shadow: 0 0;
+    height: 4em;
+  }
+  40% {
+    box-shadow: 0 -2em;
+    height: 5em;
+  }
+}

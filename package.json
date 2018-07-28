@@ -1,0 +1,42 @@
+{
+  "name": "alexa-sign-language",
+  "version": "0.0.1",
+  "license": "do what you want but try to give back",
+  "dependencies": {
+    "deeplearn": "~0.5.0",
+    "deeplearn-knn-image-classifier": "^0.3.0",
+    "pre-commit": "^1.2.2"
+  },
+  "scripts": {
+    "start": "budo main.js:dist/build.js --live --host localhost",
+    "build": "browserify main.js -o dist/build.js"
+  },
+  "pre-commit": [
+    "build"
+  ],
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "presets": [
+            "es2015"
+          ],
+          "plugins": [
+            "syntax-async-functions",
+            "transform-regenerator"
+          ]
+        }
+      ]
+    ]
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-syntax-async-functions": "^6.13.0",
+    "babel-plugin-transform-regenerator": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babelify": "^8.0.0",
+    "budo": "^10.0.4"
+  }
+}

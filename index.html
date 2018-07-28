@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Alexa</title>
+    <link href="https://fonts.googleapis.com/css?family=Baloo+Bhaina" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="dist/build.js"></script> 
+    
+</head>
+<body>
+  <video id="video" src='' autoplay playsinline></video>
+  <div class="split-left">
+    <div class="centered">
+      <h1 id="text"></h1>
+      <div id="training-list">
+        <div id="example-list"></div>
+        <div id="add">
+          <form id="add-word" autocomplete="off">
+            <input type="text" id="new-word" placeholder="Add Training word">
+            <br/><br/>
+            <label>
+              <input type="checkbox" id="is-terminal-word">
+              Is terminal word?
+            </label>
+            <br/><br/>
+            <input type="submit" value="Add Word">
+            <p>Terminal Word - A word that appears as the last word in your query</p>
+            <p>e.g What is <b><em>the weather</em></b><br/>What is <b><em>the time</em></b></p>
+          </form>
+        </div>
+        <p id="count">Training: 2 words</p>
+        <div id="action-btn"></div>
+      </div>
+      
+    </div>
+  </div>
+  <div class="split-right">
+    <div class="centered">
+      <div id="loader"></div>
+      <h1>
+        <span id="answerText"></span>
+        <span id="interimText"></span>
+      </h1>
+    </div>
+  </div>
+  
+  
+  
+
+</body>
+</html>
