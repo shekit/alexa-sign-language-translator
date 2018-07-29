@@ -59,10 +59,14 @@ var Main = function () {
 
     this.knn = null;
 
+    this.textLine = document.getElementById("text");
+
     // Get video element that will contain the webcam image
     this.video = document.getElementById('video');
 
     this.addWordForm = document.getElementById("add-word");
+
+    this.statusText = document.getElementById("status-text");
 
     this.video.addEventListener('mousedown', function () {
       // click on video to go back to training buttons
@@ -124,8 +128,36 @@ var Main = function () {
 
       predButton.addEventListener('mousedown', function () {
         console.log("start predicting");
-        _this2.trainingListDiv.style.display = "none";
-        _this2.startPredicting();
+        var exampleCount = _this2.knn.getClassExampleCount();
+
+        // check if training has been done
+        if (Math.max.apply(Math, _toConsumableArray(exampleCount)) > 0) {
+
+          // if wake word has not been trained
+          if (exampleCount[0] == 0) {
+            alert('You haven\'t trained the wake word ALEXA');
+            return;
+          }
+
+          // if the catchall phrase other hasnt been trained
+          if (exampleCount[words.length - 1] == 0) {
+            alert('You haven\'t trained the catchall sign OTHER.\n            Capture yourself in idle states e.g hands by your side, empty background etc.\n            This prevents words from being erroneously detected.');
+            return;
+          }
+
+          // check if atleast one terminal word has been trained
+          if (!_this2.areTerminalWordsTrained(exampleCount)) {
+            alert('Train atleast one terminal word.\n            A terminal word is a word that appears at the end of a query and is necessary to trigger transcribing. e.g What is *the weather*\n            Your terminal words: ' + endWords);
+            return;
+          }
+
+          _this2.trainingListDiv.style.display = "none";
+          _this2.textLine.classList.remove("intro-steps");
+          _this2.textLine.innerText = "Sign your query";
+          _this2.startPredicting();
+        } else {
+          alert('You haven\'t trained any words yet.\n          Press and hold on the "Train" button next to each word while performing the sign in front of the webcam.');
+        }
       });
     }
   }, {
@@ -154,7 +186,25 @@ var Main = function () {
         _this3.loadKNN();
 
         _this3.createPredictBtn();
+
+        _this3.textLine.innerText = "Step 2: Train";
       });
+    }
+  }, {
+    key: 'areTerminalWordsTrained',
+    value: function areTerminalWordsTrained(exampleCount) {
+
+      var totalTerminalWordsTrained = 0;
+
+      for (var i = 0; i < words.length; i++) {
+        if (endWords.includes(words[i])) {
+          if (exampleCount[i] > 0) {
+            totalTerminalWordsTrained += 1;
+          }
+        }
+      }
+
+      return totalTerminalWordsTrained;
     }
   }, {
     key: 'startWebcam',
@@ -317,6 +367,9 @@ var Main = function () {
         this.stopTraining();
       }
 
+      document.getElementById("status").style.background = "deepskyblue";
+      this.setStatusText("Status: Ready!");
+
       this.video.play();
 
       this.pred = requestAnimationFrame(this.predict.bind(this));
@@ -325,6 +378,7 @@ var Main = function () {
     key: 'pausePredicting',
     value: function pausePredicting() {
       console.log("pause predicting");
+      this.setStatusText("Status: Paused Predicting");
       cancelAnimationFrame(this.pred);
     }
   }, {
@@ -368,6 +422,11 @@ var Main = function () {
       }
 
       this.pred = requestAnimationFrame(this.predict.bind(this));
+    }
+  }, {
+    key: 'setStatusText',
+    value: function setStatusText(status) {
+      this.statusText.innerText = status;
     }
   }]);
 
@@ -424,6 +483,7 @@ var TextToSpeech = function () {
       } else {
         this.loader.style.display = "none";
         this.ansText.innerText = "No query detected";
+        main.previousPrediction = -1;
       }
       this.currentPredictedWords = [];
     }
@@ -472,6 +532,9 @@ var TextToSpeech = function () {
         if (endWords.includes(word)) {
           //if last word is one of end words start listening for transcribing
           console.log("this was the last word");
+
+          main.setStatusText("Status: Waiting for Response");
+
           var stt = new SpeechToText();
         }
       };
@@ -516,6 +579,7 @@ var SpeechToText = function () {
     this.recognition.onstart = function () {
       _this10.recognizing = true;
       console.log("started recognizing");
+      main.setStatusText("Status: Transcribing");
     };
 
     this.recognition.onerror = function (evt) {
@@ -529,6 +593,7 @@ var SpeechToText = function () {
       }
       _this10.recognizing = false;
 
+      main.setStatusText("Status: Finished Transcribing");
       // restart prediction after a pause
       setTimeout(function () {
         main.startPredicting();
@@ -609,6 +674,13 @@ var SpeechToText = function () {
 var main = null;
 
 window.addEventListener('load', function () {
+
+  var ua = navigator.userAgent.toLowerCase();
+
+  if (!(ua.indexOf("chrome") != -1 || ua.indexOf("firefox") != -1)) {
+    alert("Please visit in the latest Chrome or Firefox");
+    return;
+  }
 
   main = new Main();
 });
