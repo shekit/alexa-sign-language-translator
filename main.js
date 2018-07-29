@@ -640,6 +640,17 @@ var main = null;
 
 window.addEventListener('load', () => {
 
+  var ua = navigator.userAgent.toLowerCase()
+
+  console.log(ua)
+
+  if(!(ua.indexOf("chrome") != -1 || ua.indexOf("firefox")!= -1)){
+    alert("Please visit in the latest Chrome or Firefox")
+    return
+  } 
+
+
   main = new Main()
 
 });
+
