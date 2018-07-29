@@ -44,6 +44,8 @@ class Main {
     this.exampleListDiv = document.getElementById("example-list")
     
     this.knn = null
+
+    this.textLine = document.getElementById("text")
     
     // Get video element that will contain the webcam image
     this.video = document.getElementById('video');
@@ -111,8 +113,48 @@ class Main {
 
     predButton.addEventListener('mousedown', () => {
       console.log("start predicting")
-      this.trainingListDiv.style.display = "none"
-      this.startPredicting()
+      const exampleCount = this.knn.getClassExampleCount()
+
+      // check if training has been done
+      if(Math.max(...exampleCount) > 0){
+
+        // if wake word has not been trained
+        if(exampleCount[0] == 0){
+          alert(
+            `You haven't trained the wake word ALEXA`
+            )
+          return
+        }
+
+        // if the catchall phrase other hasnt been trained
+        if(exampleCount[words.length-1] == 0){
+          alert(
+            `You haven't trained the catchall sign OTHER.
+            Capture yourself in idle states e.g hands by your side, empty background etc.
+            This prevents words from being erroneously detected.`)
+          return
+        }
+
+        // check if atleast one terminal word has been trained
+        if(!this.areTerminalWordsTrained(exampleCount)){
+          alert(
+            `Train atleast one terminal word.
+            A terminal word is a word that appears at the end of a query and is necessary to trigger transcribing. e.g What is *the weather*
+            Your terminal words: ${endWords}`
+            )
+          return
+        }
+
+        this.trainingListDiv.style.display = "none"
+        this.textLine.classList.remove("intro-steps")
+        this.textLine.innerText = "Sign your query"
+        this.startPredicting()
+      } else {
+        alert(
+          `You haven't trained any words yet.
+          Press and hold on the "Train" button next to each word while performing the sign in front of the webcam.`
+          )
+      }
     })
   }
 
@@ -141,7 +183,25 @@ class Main {
       this.loadKNN()
 
       this.createPredictBtn()
+
+      this.textLine.innerText = "Step 2: Train"
+
     })
+  }
+
+  areTerminalWordsTrained(exampleCount){
+
+    var totalTerminalWordsTrained = 0
+
+    for(var i=0;i<words.length;i++){
+      if(endWords.includes(words[i])){
+        if(exampleCount[i] > 0){
+          totalTerminalWordsTrained+=1
+        }
+      }
+    }
+
+    return totalTerminalWordsTrained
   }
 
   startWebcam(){
@@ -384,6 +444,7 @@ class TextToSpeech{
     } else {
       this.loader.style.display = "none"
       this.ansText.innerText = "No query detected"
+      main.previousPrediction = -1
     }
     this.currentPredictedWords = []
   }
