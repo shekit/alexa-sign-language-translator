@@ -15,6 +15,10 @@ h1 {
   line-height: 100%;
 }
 
+.intro-steps {
+  font-size: 30px;
+}
+
 #add-word{
   border:1px solid #333;
   padding: 10px;
