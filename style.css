@@ -1,11 +1,41 @@
 body{
   font-family: "Helvetica Neue", "sans-serif";
+  margin: 0;
+  padding: 0;
 }
 
 #video{
   transform: rotateY(180deg);
   -webkit-transform:rotateY(180deg); /* Safari and Chrome */
   -moz-transform:rotateY(180deg); /* Firefox */
+  position: absolute;
+  left: 32.5%;
+  top:5%;
+  z-index: 10;
+  background-color: black;
+  border: 8px solid black;
+  border-radius: 5px;
+}
+
+#status{
+  width: 300px;
+  height: 50px;
+  background: red;
+  position: absolute;
+  z-index: 30;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  border:7px solid black;
+  border-top: none;
+  text-align: center;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+#status p{
+  color: white;
+  font-weight: bold;
 }
 
 h1 {
@@ -73,15 +103,6 @@ h1 {
   margin-bottom: 30px;
 }
 
-#video {
-  position: absolute;
-  left: 32.5%;
-  top:3%;
-  z-index: 10;
-  background-color: black;
-  border: 8px solid black;
-  border-radius: 5px;
-}
 
 #loader,
 #loader:before,

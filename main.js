@@ -52,6 +52,8 @@ class Main {
 
     this.addWordForm = document.getElementById("add-word")
 
+    this.statusText = document.getElementById("status-text")
+
     this.video.addEventListener('mousedown', () => {
       // click on video to go back to training buttons
       main.pausePredicting();
@@ -343,6 +345,9 @@ class Main {
       this.stopTraining();
     }
 
+    document.getElementById("status").style.background = "deepskyblue"
+    this.setStatusText("Status: Ready!")
+
     this.video.play();
 
     this.pred = requestAnimationFrame(this.predict.bind(this))
@@ -350,6 +355,7 @@ class Main {
 
   pausePredicting(){
     console.log("pause predicting")
+    this.setStatusText("Status: Paused Predicting")
     cancelAnimationFrame(this.pred)
   }
 
@@ -397,6 +403,10 @@ class Main {
     this.pred = requestAnimationFrame(this.predict.bind(this))
   }
 
+  setStatusText(status){
+    this.statusText.innerText = status
+  }
+
 }
 
 class TextToSpeech{
@@ -414,6 +424,7 @@ class TextToSpeech{
 
     this.currentPredictedWords = []
     this.waitTimeForQuery = 5000
+
 
     this.synth.onvoiceschanged = () => {
       this.populateVoiceList()
@@ -494,6 +505,9 @@ class TextToSpeech{
       if(endWords.includes(word)){
          //if last word is one of end words start listening for transcribing
         console.log("this was the last word")
+
+        main.setStatusText("Status: Waiting for Response")
+
         let stt = new SpeechToText()
       }
     }
@@ -510,6 +524,8 @@ class TextToSpeech{
     this.synth.speak(utterThis)
 
   }
+
+
 }
 
 class SpeechToText{
@@ -532,6 +548,7 @@ class SpeechToText{
     this.recognition.onstart = () => {
       this.recognizing = true;
       console.log("started recognizing")
+      main.setStatusText("Status: Transcribing")
     }
 
     this.recognition.onerror = (evt) => {
@@ -542,9 +559,11 @@ class SpeechToText{
       console.log("stopped recognizing")
       if(this.finalTranscript.length == 0){
         this.type("No response detected")
+
       }
       this.recognizing = false;
 
+      main.setStatusText("Status: Finished Transcribing")
       // restart prediction after a pause
       setTimeout(() => {
         main.startPredicting()
