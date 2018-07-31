@@ -1,9 +1,7 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); // Launch in kiosk mode
-// /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --kiosk --app=http://localhost:9966
-
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _deeplearnKnnImageClassifier = require('deeplearn-knn-image-classifier');
 
@@ -15,7 +13,9 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } // Launch in kiosk mode
+// /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --kiosk --app=http://localhost:9966
+
 
 // Webcam Image size. Must be 227. 
 var IMAGE_SIZE = 227;
@@ -32,9 +32,32 @@ var words = ["alexa", "hello", "other"];
 // words from above array which act as terminal words in a sentence
 var endWords = ["hello"];
 
+var LaunchModal = function LaunchModal() {
+  var _this = this;
+
+  _classCallCheck(this, LaunchModal);
+
+  this.modalWindow = document.getElementById('launchModal');
+
+  this.closeBtn = document.getElementById('close-modal');
+
+  this.closeBtn.addEventListener('click', function (e) {
+    _this.modalWindow.style.display = "none";
+  });
+
+  window.addEventListener('click', function (e) {
+    if (e.target == _this.modalWindow) {
+      _this.modalWindow.style.display = "none";
+    }
+  });
+
+  this.modalWindow.style.display = "block";
+  this.modalWindow.style.zIndex = 500;
+};
+
 var Main = function () {
   function Main() {
-    var _this = this;
+    var _this2 = this;
 
     _classCallCheck(this, Main);
 
@@ -71,7 +94,7 @@ var Main = function () {
     this.video.addEventListener('mousedown', function () {
       // click on video to go back to training buttons
       main.pausePredicting();
-      _this.trainingListDiv.style.display = "block";
+      _this2.trainingListDiv.style.display = "block";
     });
 
     // add word to training example set
@@ -83,8 +106,8 @@ var Main = function () {
       if (word && !words.includes(word)) {
         //console.log(word)
         words.splice(words.length - 1, 0, word); //insert at penultimate index in array
-        _this.createButtonList(false);
-        _this.updateExampleCount();
+        _this2.createButtonList(false);
+        _this2.updateExampleCount();
         //console.log(words)
 
 
@@ -104,6 +127,9 @@ var Main = function () {
       return;
     });
 
+    // show modal window
+    var modal = new LaunchModal();
+
     this.updateExampleCount();
 
     document.getElementById("status").style.display = "none";
@@ -119,7 +145,7 @@ var Main = function () {
   _createClass(Main, [{
     key: 'createPredictBtn',
     value: function createPredictBtn() {
-      var _this2 = this;
+      var _this3 = this;
 
       var div = document.getElementById("action-btn");
       div.innerHTML = "";
@@ -130,7 +156,7 @@ var Main = function () {
 
       predButton.addEventListener('mousedown', function () {
         console.log("start predicting");
-        var exampleCount = _this2.knn.getClassExampleCount();
+        var exampleCount = _this3.knn.getClassExampleCount();
 
         // check if training has been done
         if (Math.max.apply(Math, _toConsumableArray(exampleCount)) > 0) {
@@ -148,15 +174,15 @@ var Main = function () {
           }
 
           // check if atleast one terminal word has been trained
-          if (!_this2.areTerminalWordsTrained(exampleCount)) {
+          if (!_this3.areTerminalWordsTrained(exampleCount)) {
             alert('Add examples for atleast one terminal word.\n\nA terminal word is a word that appears at the end of a query and is necessary to trigger transcribing. e.g What is *the weather*\n\nYour terminal words are: ' + endWords);
             return;
           }
 
-          _this2.trainingListDiv.style.display = "none";
-          _this2.textLine.classList.remove("intro-steps");
-          _this2.textLine.innerText = "Sign your query";
-          _this2.startPredicting();
+          _this3.trainingListDiv.style.display = "none";
+          _this3.textLine.classList.remove("intro-steps");
+          _this3.textLine.innerText = "Sign your query";
+          _this3.startPredicting();
         } else {
           alert('You haven\'t added any examples yet.\n\nPress and hold on the "Add Example" button next to each word while performing the sign in front of the webcam.');
         }
@@ -165,7 +191,7 @@ var Main = function () {
   }, {
     key: 'createTrainingBtn',
     value: function createTrainingBtn() {
-      var _this3 = this;
+      var _this4 = this;
 
       var div = document.getElementById("action-btn");
       div.innerHTML = "";
@@ -189,25 +215,25 @@ var Main = function () {
           if (!proceed) return;
         }
 
-        _this3.startWebcam();
+        _this4.startWebcam();
 
         console.log("ready to train");
-        _this3.createButtonList(true);
-        _this3.addWordForm.innerHTML = '';
+        _this4.createButtonList(true);
+        _this4.addWordForm.innerHTML = '';
         var p = document.createElement('p');
         p.innerText = 'Perform the appropriate sign while holding down the ADD EXAMPLE button near each word to capture atleast 30 training examples for each word\n\n      For OTHER, capture yourself in an idle state to act as a catchall sign. e.g hands down by your side';
-        _this3.addWordForm.appendChild(p);
+        _this4.addWordForm.appendChild(p);
 
-        _this3.loadKNN();
+        _this4.loadKNN();
 
-        _this3.createPredictBtn();
+        _this4.createPredictBtn();
 
-        _this3.textLine.innerText = "Step 2: Train";
+        _this4.textLine.innerText = "Step 2: Train";
 
         var subtext = document.createElement('span');
         subtext.innerHTML = "<br/>Time to associate signs with the words";
         subtext.classList.add('subtext');
-        _this3.textLine.appendChild(subtext);
+        _this4.textLine.appendChild(subtext);
       });
     }
   }, {
@@ -229,32 +255,32 @@ var Main = function () {
   }, {
     key: 'startWebcam',
     value: function startWebcam() {
-      var _this4 = this;
+      var _this5 = this;
 
       // Setup webcam
       navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false }).then(function (stream) {
-        _this4.video.srcObject = stream;
-        _this4.video.width = IMAGE_SIZE;
-        _this4.video.height = IMAGE_SIZE;
+        _this5.video.srcObject = stream;
+        _this5.video.width = IMAGE_SIZE;
+        _this5.video.height = IMAGE_SIZE;
 
-        _this4.video.addEventListener('playing', function () {
-          return _this4.videoPlaying = true;
+        _this5.video.addEventListener('playing', function () {
+          return _this5.videoPlaying = true;
         });
-        _this4.video.addEventListener('paused', function () {
-          return _this4.videoPlaying = false;
+        _this5.video.addEventListener('paused', function () {
+          return _this5.videoPlaying = false;
         });
       });
     }
   }, {
     key: 'loadKNN',
     value: function loadKNN() {
-      var _this5 = this;
+      var _this6 = this;
 
       this.knn = new _deeplearnKnnImageClassifier.KNNImageClassifier(words.length, TOPK);
 
       // Load knn model
       this.knn.load().then(function () {
-        return _this5.startTraining();
+        return _this6.startTraining();
       });
     }
   }, {
@@ -279,7 +305,7 @@ var Main = function () {
   }, {
     key: 'createButton',
     value: function createButton(i, showBtn) {
-      var _this6 = this;
+      var _this7 = this;
 
       var div = document.createElement('div');
       this.exampleListDiv.appendChild(div);
@@ -307,10 +333,10 @@ var Main = function () {
 
         // Listen for mouse events when clicking the button
         button.addEventListener('mousedown', function () {
-          return _this6.training = i;
+          return _this7.training = i;
         });
         button.addEventListener('mouseup', function () {
-          return _this6.training = -1;
+          return _this7.training = -1;
         });
 
         // Create clear button to emove training examples
@@ -320,8 +346,8 @@ var Main = function () {
 
         btn.addEventListener('mousedown', function () {
           console.log("clear training data for this label");
-          _this6.knn.clearClass(i);
-          _this6.infoTexts[i].innerText = " 0 examples";
+          _this7.knn.clearClass(i);
+          _this7.infoTexts[i].innerText = " 0 examples";
         });
 
         // Create info text
@@ -404,7 +430,7 @@ var Main = function () {
   }, {
     key: 'predict',
     value: function predict() {
-      var _this7 = this;
+      var _this8 = this;
 
       this.now = Date.now();
       this.elapsed = this.now - this.then;
@@ -424,12 +450,12 @@ var Main = function () {
 
                 // if matches & is above threshold & isnt same as prev prediction
                 // and is not the last class which is a catch all class
-                if (res.classIndex == i && res.confidences[i] > predictionThreshold && res.classIndex != _this7.previousPrediction && res.classIndex != words.length - 1) {
+                if (res.classIndex == i && res.confidences[i] > predictionThreshold && res.classIndex != _this8.previousPrediction && res.classIndex != words.length - 1) {
 
-                  _this7.tts.speak(words[i]);
+                  _this8.tts.speak(words[i]);
 
                   // set previous prediction so it doesnt get called again
-                  _this7.previousPrediction = res.classIndex;
+                  _this8.previousPrediction = res.classIndex;
                 }
               }
             }).then(function () {
@@ -456,7 +482,7 @@ var Main = function () {
 
 var TextToSpeech = function () {
   function TextToSpeech() {
-    var _this8 = this;
+    var _this9 = this;
 
     _classCallCheck(this, TextToSpeech);
 
@@ -475,7 +501,7 @@ var TextToSpeech = function () {
     this.waitTimeForQuery = 5000;
 
     this.synth.onvoiceschanged = function () {
-      _this8.populateVoiceList();
+      _this9.populateVoiceList();
     };
   }
 
@@ -511,7 +537,7 @@ var TextToSpeech = function () {
   }, {
     key: 'speak',
     value: function speak(word) {
-      var _this9 = this;
+      var _this10 = this;
 
       if (word == 'alexa') {
         console.log("clear para");
@@ -519,8 +545,8 @@ var TextToSpeech = function () {
 
         setTimeout(function () {
           // if no query detected after alexa is signed
-          if (_this9.currentPredictedWords.length == 1) {
-            _this9.clearPara(false);
+          if (_this10.currentPredictedWords.length == 1) {
+            _this10.clearPara(false);
           }
         }, this.waitTimeForQuery);
       }
@@ -578,7 +604,7 @@ var TextToSpeech = function () {
 
 var SpeechToText = function () {
   function SpeechToText() {
-    var _this10 = this;
+    var _this11 = this;
 
     _classCallCheck(this, SpeechToText);
 
@@ -598,7 +624,7 @@ var SpeechToText = function () {
     this.cutOffTime = 15000; // cut off speech to text after
 
     this.recognition.onstart = function () {
-      _this10.recognizing = true;
+      _this11.recognizing = true;
       console.log("started recognizing");
       main.setStatusText("Status: Transcribing");
     };
@@ -609,10 +635,10 @@ var SpeechToText = function () {
 
     this.recognition.onend = function () {
       console.log("stopped recognizing");
-      if (_this10.finalTranscript.length == 0) {
-        _this10.type("No response detected");
+      if (_this11.finalTranscript.length == 0) {
+        _this11.type("No response detected");
       }
-      _this10.recognizing = false;
+      _this11.recognizing = false;
 
       main.setStatusText("Status: Finished Transcribing");
       // restart prediction after a pause
@@ -629,22 +655,22 @@ var SpeechToText = function () {
 
       for (var i = event.resultIndex; i < event.results.length; ++i) {
         if (event.results[i].isFinal) {
-          _this10.finalTranscript += event.results[i][0].transcript;
+          _this11.finalTranscript += event.results[i][0].transcript;
         } else {
           interim_transcript += event.results[i][0].transcript;
         }
       }
 
-      _this10.interimType(interim_transcript);
-      _this10.type(_this10.finalTranscript);
+      _this11.interimType(interim_transcript);
+      _this11.type(_this11.finalTranscript);
     };
 
     setTimeout(function () {
-      _this10.startListening();
+      _this11.startListening();
     }, 0);
 
     setTimeout(function () {
-      _this10.stopListening();
+      _this11.stopListening();
     }, this.cutOffTime);
   }
 

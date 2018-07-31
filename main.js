@@ -21,6 +21,27 @@ var words = ["alexa", "hello", "other"]
 // words from above array which act as terminal words in a sentence
 var endWords = ["hello"]
 
+class LaunchModal {
+  constructor(){
+    this.modalWindow = document.getElementById('launchModal')
+
+    this.closeBtn = document.getElementById('close-modal')
+
+    this.closeBtn.addEventListener('click', (e) => {
+      this.modalWindow.style.display = "none"
+    })
+
+    window.addEventListener('click', (e) => {
+      if(e.target == this.modalWindow){
+        this.modalWindow.style.display = "none"
+      }
+    })
+
+    this.modalWindow.style.display = "block"
+    this.modalWindow.style.zIndex = 500
+  }
+}
+
 
 class Main {
   constructor(){
@@ -91,6 +112,8 @@ class Main {
       return
     })
 
+    // show modal window
+    let modal = new LaunchModal()
 
     this.updateExampleCount()
 
