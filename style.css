@@ -45,6 +45,13 @@ h1 {
   line-height: 100%;
 }
 
+h1 .subtext {
+  font-family: "Helvetica Neue", "sans-serif";
+  font-size:14px;
+  font-weight: normal;
+  line-height: 16px;
+}
+
 .intro-steps {
   font-size: 30px;
 }
