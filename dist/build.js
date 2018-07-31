@@ -106,6 +106,8 @@ var Main = function () {
 
     this.updateExampleCount();
 
+    document.getElementById("status").style.display = "none";
+
     this.createTrainingBtn();
 
     this.createButtonList(false);
@@ -135,19 +137,19 @@ var Main = function () {
 
           // if wake word has not been trained
           if (exampleCount[0] == 0) {
-            alert('You haven\'t trained the wake word ALEXA');
+            alert('You haven\'t added examples for the wake word ALEXA');
             return;
           }
 
           // if the catchall phrase other hasnt been trained
           if (exampleCount[words.length - 1] == 0) {
-            alert('You haven\'t trained the catchall sign OTHER.\n            Capture yourself in idle states e.g hands by your side, empty background etc.\n            This prevents words from being erroneously detected.');
+            alert('You haven\'t added examples for the catchall sign OTHER.\n\nCapture yourself in idle states e.g hands by your side, empty background etc.\n\nThis prevents words from being erroneously detected.');
             return;
           }
 
           // check if atleast one terminal word has been trained
           if (!_this2.areTerminalWordsTrained(exampleCount)) {
-            alert('Train atleast one terminal word.\n            A terminal word is a word that appears at the end of a query and is necessary to trigger transcribing. e.g What is *the weather*\n            Your terminal words: ' + endWords);
+            alert('Add examples for atleast one terminal word.\n\nA terminal word is a word that appears at the end of a query and is necessary to trigger transcribing. e.g What is *the weather*\n\nYour terminal words are: ' + endWords);
             return;
           }
 
@@ -156,7 +158,7 @@ var Main = function () {
           _this2.textLine.innerText = "Sign your query";
           _this2.startPredicting();
         } else {
-          alert('You haven\'t trained any words yet.\n          Press and hold on the "Train" button next to each word while performing the sign in front of the webcam.');
+          alert('You haven\'t added any examples yet.\n\nPress and hold on the "Add Example" button next to each word while performing the sign in front of the webcam.');
         }
       });
     }
@@ -174,13 +176,26 @@ var Main = function () {
 
       trainButton.addEventListener('mousedown', function () {
 
+        // check if user has added atleast one terminal word
+        if (words.length > 3 && endWords.length == 1) {
+          console.log('no terminal word added');
+          alert('You have not added any terminal words.\nCurrently the only query you can make is "Alexa, hello".\n\nA terminal word is a word that will appear in the end of your query.\nIf you intend to ask "What\'s the weather" & "What\'s the time" then add "the weather" and "the time" as terminal words. "What\'s" on the other hand is not a terminal word.');
+          return;
+        }
+
+        if (words.length == 3 && endWords.length == 1) {
+          var proceed = confirm("You have not added any words.\n\nThe only query you can currently make is: 'Alexa, hello'");
+
+          if (!proceed) return;
+        }
+
         _this3.startWebcam();
 
         console.log("ready to train");
         _this3.createButtonList(true);
         _this3.addWordForm.innerHTML = '';
         var p = document.createElement('p');
-        p.innerText = 'Perform the appropriate sign while holding down on the button near each word to capture training examples\n\n      For OTHER, capture yourself in an idle state to act as a catchall sign. e.g hands down by your side';
+        p.innerText = 'Perform the appropriate sign while holding down the ADD EXAMPLE button near each word to capture atleast 30 training examples for each word\n\n      For OTHER, capture yourself in an idle state to act as a catchall sign. e.g hands down by your side';
         _this3.addWordForm.appendChild(p);
 
         _this3.loadKNN();
@@ -188,6 +203,11 @@ var Main = function () {
         _this3.createPredictBtn();
 
         _this3.textLine.innerText = "Step 2: Train";
+
+        var subtext = document.createElement('span');
+        subtext.innerHTML = "<br/>Time to associate signs with the words";
+        subtext.classList.add('subtext');
+        _this3.textLine.appendChild(subtext);
       });
     }
   }, {
@@ -282,7 +302,7 @@ var Main = function () {
       if (showBtn) {
         // Create training button
         var button = document.createElement('button');
-        button.innerText = "Train"; //"Train " + words[i].toUpperCase()
+        button.innerText = "Add Example"; //"Train " + words[i].toUpperCase()
         div.appendChild(button);
 
         // Listen for mouse events when clicking the button
@@ -426,6 +446,7 @@ var Main = function () {
   }, {
     key: 'setStatusText',
     value: function setStatusText(status) {
+      document.getElementById("status").style.display = "block";
       this.statusText.innerText = status;
     }
   }]);
