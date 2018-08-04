@@ -25,7 +25,7 @@
         <p>This project is an experiment that uses Tensorflow.js and your webcam to make Amazon Echo respond to sign language. It began with a simple question:</p> 
         <p><b><em>"If voice is the future of computing what about those who cannot hear or speak?"</em></b></p>
         <p>You can find the code for this demo on <a href="https://github.com/shekit/alexa-sign-language-translator" target="_blank">github</a> or watch a <a href="https://www.youtube.com/watch?v=kS53y6GWm0w" target="_blank">video</a> of it in action.</p>
-        <p style="font-size:12px;"><em>Note: This demo runs entirely in your browser without any data sent to any server</em></p>
+        <p style="font-size:12px;"><em><b>Note: Turn on your speakers and allow permission for webcam and microphone access when requested. This demo runs entirely in your browser without any data sent to any server</b></em></p>
       </div>
     </div>
   </div>
@@ -43,14 +43,8 @@
           <form id="add-word" autocomplete="off">
             <input type="text" id="new-word" placeholder="Add Training word">
             <br/><br/>
-            <label>
-              <input type="checkbox" id="is-terminal-word">
-              Is terminal word?
-            </label>
-            <br/><br/>
             <input type="submit" value="Add Word">
-            <p><b>Terminal Word</b> - A word that appears as the last word in your query</p>
-            <p>e.g If you intend to ask "What's <b><em>the weather</em></b>?" & "What's <b><em>the time</em></b>?" then <b><em>the weather</em></b> and <b><em>the time</em></b> are terminal words whereas <b><em>what's</em></b> is not</p>
+            <p>You may group articles and words together when adding. <br/>e.g instead of adding <em><b>the</b></em> and <em><b>weather</b></em> separately, simply add <b><em>the weather</em></b>
           </form>
         </div>
         <p id="count">Training: 2 words</p>

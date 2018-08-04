@@ -18,9 +18,6 @@ var words = ["alexa", "hello", "other"]
 //"add","eggs","to the list","five","feet","in meters","tell me","a joke", "bye", "other"]
 
 
-// words from above array which act as terminal words in a sentence
-var endWords = ["hello"]
-
 class LaunchModal {
   constructor(){
     this.modalWindow = document.getElementById('launchModal')
@@ -52,6 +49,7 @@ class Main {
 
     this.previousPrediction = -1
     this.currentPredictedWords = []
+
 
     // variables to restrict prediction rate
     this.now;
@@ -85,7 +83,6 @@ class Main {
     this.addWordForm.addEventListener('submit', (e) => {
       e.preventDefault();
       let word = document.getElementById("new-word").value.trim().toLowerCase();
-      let checkbox = document.getElementById("is-terminal-word")
 
       if(word && !words.includes(word)){
         //console.log(word)
@@ -93,17 +90,10 @@ class Main {
         this.createButtonList(false)
         this.updateExampleCount()
         //console.log(words)
-        
-
-        if(checkbox.checked){
-          endWords.push(word)
-        }
 
         document.getElementById("new-word").value = ''
-        checkbox.checked = false;
 
         // console.log(words)
-        // console.log(endWords)
 
       } else {
         alert("Duplicate word or no word entered")
@@ -113,7 +103,7 @@ class Main {
     })
 
     // show modal window
-    let modal = new LaunchModal()
+    //let modal = new LaunchModal()
 
     this.updateExampleCount()
 
@@ -158,14 +148,10 @@ class Main {
           return
         }
 
-        // check if atleast one terminal word has been trained
-        if(!this.areTerminalWordsTrained(exampleCount)){
-          alert(
-            `Add examples for atleast one terminal word.\n\nA terminal word is a word that appears at the end of a query and is necessary to trigger transcribing. e.g What is *the weather*\n\nYour terminal words are: ${endWords}`
-            )
-          return
-        }
+        let proceed = confirm("Remember to sign the wake word Alexa both at the beginning and end of your query.\n\ne.g Alexa, what's the weather (Alexa)")
 
+        if(!proceed) return
+          
         this.trainingListDiv.style.display = "none"
         this.textLine.classList.remove("intro-steps")
         this.textLine.innerText = "Sign your query"
@@ -189,14 +175,7 @@ class Main {
 
     trainButton.addEventListener('mousedown', () => {
 
-      // check if user has added atleast one terminal word
-      if(words.length > 3 && endWords.length == 1){
-        console.log('no terminal word added')
-        alert(`You have not added any terminal words.\nCurrently the only query you can make is "Alexa, hello".\n\nA terminal word is a word that will appear in the end of your query.\nIf you intend to ask "What's the weather" & "What's the time" then add "the weather" and "the time" as terminal words. "What's" on the other hand is not a terminal word.`)
-        return
-      }
-
-      if(words.length == 3 && endWords.length ==1){
+      if(words.length == 3){
         var proceed = confirm("You have not added any words.\n\nThe only query you can currently make is: 'Alexa, hello'")
 
         if(!proceed) return
@@ -225,21 +204,6 @@ class Main {
       this.textLine.appendChild(subtext)
 
     })
-  }
-
-  areTerminalWordsTrained(exampleCount){
-
-    var totalTerminalWordsTrained = 0
-
-    for(var i=0;i<words.length;i++){
-      if(endWords.includes(words[i])){
-        if(exampleCount[i] > 0){
-          totalTerminalWordsTrained+=1
-        }
-      }
-    }
-
-    return totalTerminalWordsTrained
   }
 
   startWebcam(){
@@ -290,7 +254,7 @@ class Main {
     const wordText = document.createElement('span')
 
     if(i==0 && !showBtn){
-      wordText.innerText = words[i].toUpperCase()+" (wake word) "
+      wordText.innerText = words[i].toUpperCase()+" (wake/stop word) "
     } else if(i==words.length-1 && !showBtn){
       wordText.innerText = words[i].toUpperCase()+" (catchall sign) "
     } else {
@@ -425,7 +389,6 @@ class Main {
                 // set previous prediction so it doesnt get called again
                 this.previousPrediction = res.classIndex;
 
-
               }
             }
           })
@@ -448,6 +411,7 @@ class Main {
 
 class TextToSpeech{
   constructor(){
+
     this.synth = window.speechSynthesis
     this.voices = []
     this.pitch = 1.0
@@ -499,8 +463,7 @@ class TextToSpeech{
 
   speak(word){
 
-    if(word == 'alexa'){
-      console.log("clear para")
+    if(word == 'alexa' && this.currentPredictedWords.length == 0){
       this.clearPara(true);
 
       setTimeout(() => {
@@ -513,41 +476,29 @@ class TextToSpeech{
 
     if(word != 'alexa' && this.currentPredictedWords.length == 0){
       console.log("first word should be alexa")
-      console.log(word)
       return
     }
 
-    // if(endWords.includes(word) && this.currentPredictedWords.length == 1 && (word != "hello" && word != "bye")){
-    //   console.log("end word detected early")
-    //   console.log(word)
-    //   return;
-    // }
+    if(word == "alexa" 
+      && this.currentPredictedWords.length > 1){
+       //if stop word is signed begin transcribing
+      console.log("alexa signed as stop word")
 
-    if(this.currentPredictedWords.includes(word)){
-      // prevent word from being detected repeatedly in phrase
-      console.log("word already been detected in current phrase")
+      main.setStatusText("Status: Waiting for Response")
+      this.textLine.innerText += '.'
+      let stt = new SpeechToText()
+
       return
     }
-
 
     this.currentPredictedWords.push(word)
-
+    console.log(`Current predicted words: ${this.currentPredictedWords}`)
 
     this.textLine.innerText += ' ' + word;
 
-
     var utterThis = new SpeechSynthesisUtterance(word)
 
-    utterThis.onend = (evt) => {
-      if(endWords.includes(word)){
-         //if last word is one of end words start listening for transcribing
-        console.log("this was the last word")
-
-        main.setStatusText("Status: Waiting for Response")
-
-        let stt = new SpeechToText()
-      }
-    }
+    //utterThis.onend = (evt) => {}
 
     utterThis.onerror = (evt) => {
       console.log("Error speaking")
@@ -567,6 +518,7 @@ class TextToSpeech{
 
 class SpeechToText{
   constructor(){
+
     this.interimTextLine = document.getElementById("interimText")
     this.textLine = document.getElementById("answerText")
     this.loader = document.getElementById("loader")
@@ -584,6 +536,7 @@ class SpeechToText{
 
     this.recognition.onstart = () => {
       this.recognizing = true;
+
       console.log("started recognizing")
       main.setStatusText("Status: Transcribing")
     }
@@ -596,11 +549,11 @@ class SpeechToText{
       console.log("stopped recognizing")
       if(this.finalTranscript.length == 0){
         this.type("No response detected")
-
       }
       this.recognizing = false;
 
       main.setStatusText("Status: Finished Transcribing")
+
       // restart prediction after a pause
       setTimeout(() => {
         main.startPredicting()
