@@ -103,7 +103,7 @@ class Main {
     })
 
     // show modal window
-    //let modal = new LaunchModal()
+    let modal = new LaunchModal()
 
     this.updateExampleCount()
 
@@ -151,7 +151,7 @@ class Main {
         let proceed = confirm("Remember to sign the wake word Alexa both at the beginning and end of your query.\n\ne.g Alexa, what's the weather (Alexa)")
 
         if(!proceed) return
-          
+
         this.trainingListDiv.style.display = "none"
         this.textLine.classList.remove("intro-steps")
         this.textLine.innerText = "Sign your query"
