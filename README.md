@@ -28,9 +28,9 @@ npm start
 
 This will start a web server on [`localhost:9966`](http://localhost:9966). 
 
-1. Allow permission to your webcam and microphone. 
+1. Allow permission to your webcam and microphone.
 
-2. Add some words you want to train on. 
+2. Add some words you want to train on.
 
 ![Alt Text](https://i.imgur.com/zk3kwIZ.gif)
 
